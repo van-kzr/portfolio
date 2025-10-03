@@ -10,14 +10,14 @@ const Navigation = () => {
 
     const url = {
         landing: '/',
-        about: '/about',
         project: '/project'
     };
 
     const linkVariants = {
         initial: { width: '100%' },
         animate: (isActive: boolean) => ({
-            width: isActive ? '200%' : '100%',
+            width: isActive ? '100%' : '50%',
+            originY: 1000,
             backgroundColor: isActive ? color : '#ABABAB',
             transition: {
                 duration: 0.6,
@@ -32,19 +32,18 @@ const Navigation = () => {
 
     const links = [
         { href: url.landing, id: 'landing' },
-        { href: url.about, id: 'about' },
         { href: url.project, id: 'project' }
     ];
 
     return (
         <AnimatePresence mode="wait">
-            <div className="w-full flex flex-col gap-5 pl-24">
+            <div className="w-5 min-xl:w-10 min-2xl:w-16 flex flex-col items-start gap-5">
                 {links.map((link) => {
                     const isActive = location.pathname === link.href;
                     return (
-                        <motion.div key={link.id} initial="initial" animate="animate" exit="exit" whileHover="hover" className="h-3 lg:h-2 w-10 lg:w-5 relative rounded-e-full" >
+                        <motion.div key={link.id} variants={linkVariants} custom={isActive} initial="initial" animate="animate" exit="exit" whileHover="hover" className="h-1 w-1/2 min-2xl:h-[6px] rounded-sm bg-gradient-to-r from-cyan-400 to-blue-500" >
                             <NavLink to={link.href}>
-                                <motion.div variants={linkVariants} custom={isActive} className="h-full w-full border-4 lg:border-2 border-solid border-[#131313] rounded-full" />
+                               <div className="w-full h-full"></div> 
                             </NavLink>
                         </motion.div>
                     );

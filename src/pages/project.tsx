@@ -1,134 +1,68 @@
-'use client';
-
-import { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useMemo } from 'react';
+import A1 from "../assets/a1.png";
+import A2 from "../assets/a2.png";
+import { motion } from 'framer-motion';
+import ProjectItem from '../components/project-item';
 
 const Home = () => {
-	const [currentIndex, setCurrentIndex] = useState(0);
 
 	const projects = useMemo(() => [ 
 		{ 
 			name: 'Course-Schedule-App', 
 			category: 'Web', 
-			description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa sunt facere unde nisi reprehenderit ullam esse laudantium voluptatibus asperiores qui saepe', 
-			buildwith: [ 
-				{ name: 'Next.js', icon: 'https://skillicons.dev/icons?i=nextjs' }, 
-				{ name: 'TypeScript', icon: 'https://skillicons.dev/icons?i=ts' }, 
-				{ name: 'Tailwind CSS', icon: 'https://skillicons.dev/icons?i=tailwind' }, 
-				{ name: 'Supabase', icon: 'https://skillicons.dev/icons?i=supabase' }, 
-				{ name: 'Actix', icon: 'https://skillicons.dev/icons?i=rust' }, 
-				{ name: 'Rust', icon: 'https://skillicons.dev/icons?i=rust' }, 
-			], 
+			image: A1,
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at feugiat augue. In quis porttitor dolor, ut fringilla metus. Nulla pretium interdum mattis. Fusce a eleifend felis, quis finibus enim. Nunc eu vehicula ex. Phasellus vel sem a odio posuere condimentum. ', 
+			tech: ["next js", "Axum"]
 		}, 
 		{ 
 			name: 'Course-Schedule-App', 
 			category: 'Web', 
-			description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa sunt facere unde nisi reprehenderit ullam esse laudantium voluptatibus asperiores qui saepe', 
-			buildwith: [ 
-				{ name: 'Next.js', icon: 'https://skillicons.dev/icons?i=nextjs' }, 
-				{ name: 'TypeScript', icon: 'https://skillicons.dev/icons?i=ts' }, 
-				{ name: 'Tailwind CSS', icon: 'https://skillicons.dev/icons?i=tailwind' }, 
-				{ name: 'Supabase', icon: 'https://skillicons.dev/icons?i=supabase' }, 
-				{ name: 'Actix', icon: 'https://skillicons.dev/icons?i=rust' }, 
-				{ name: 'Rust', icon: 'https://skillicons.dev/icons?i=rust' }, 
-			], 
+			image: A2,
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at feugiat augue. In quis porttitor dolor, ut fringilla metus. Nulla pretium interdum mattis. Fusce a eleifend felis, quis finibus enim. Nunc eu vehicula ex. Phasellus vel sem a odio posuere condimentum. ', 
+			tech: ["next js", "Axum"]
 		}, 
 		{ 
 			name: 'Course-Schedule-App', 
 			category: 'Web', 
-			description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa sunt facere unde nisi reprehenderit ullam esse laudantium voluptatibus asperiores qui saepe', 
-			buildwith: [ 
-				{ name: 'Next.js', icon: 'https://skillicons.dev/icons?i=nextjs' }, 
-				{ name: 'TypeScript', icon: 'https://skillicons.dev/icons?i=ts' }, 
-				{ name: 'Tailwind CSS', icon: 'https://skillicons.dev/icons?i=tailwind' }, 
-				{ name: 'Supabase', icon: 'https://skillicons.dev/icons?i=supabase' }, 
-				{ name: 'Actix', icon: 'https://skillicons.dev/icons?i=rust' }, 
-				{ name: 'Rust', icon: 'https://skillicons.dev/icons?i=rust' }, 
-			], 
+			image: A1,
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at feugiat augue. In quis porttitor dolor, ut fringilla metus. Nulla pretium interdum mattis. Fusce a eleifend felis, quis finibus enim. Nunc eu vehicula ex. Phasellus vel sem a odio posuere condimentum. ', 
+			tech: ["next js", "Axum"]
 		}, 
 		{ 
 			name: 'Course-Schedule-App', 
 			category: 'Web', 
-			description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa sunt facere unde nisi reprehenderit ullam esse laudantium voluptatibus asperiores qui saepe', 
-			buildwith: [ 
-				{ name: 'Next.js', icon: 'https://skillicons.dev/icons?i=nextjs' }, 
-				{ name: 'TypeScript', icon: 'https://skillicons.dev/icons?i=ts' }, 
-				{ name: 'Tailwind CSS', icon: 'https://skillicons.dev/icons?i=tailwind' }, 
-				{ name: 'Supabase', icon: 'https://skillicons.dev/icons?i=supabase' }, 
-				{ name: 'Actix', icon: 'https://skillicons.dev/icons?i=rust' }, 
-				{ name: 'Rust', icon: 'https://skillicons.dev/icons?i=rust' }, 
-			], 
+			image: A2,
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at feugiat augue. In quis porttitor dolor, ut fringilla metus. Nulla pretium interdum mattis. Fusce a eleifend felis, quis finibus enim. Nunc eu vehicula ex. Phasellus vel sem a odio posuere condimentum. ', 
+			tech: ["next js", "Axum"]
 		}, 
 	], []);
 
-	const handlePrev = () => {
-		setCurrentIndex((prev) => Math.max(prev - 2, 0));
-	};
-
-	const handleNext = () => {
-		setCurrentIndex((prev) => {
-		const nextIndex = prev + 2;
-		return nextIndex >= projects.length ? prev : nextIndex;
-		});
-	};
-
-	const visibleProjects = projects.slice(currentIndex, currentIndex + 4);
-
 	return (
-		<div className="h-full w-full px-80 flex flex-col items-center justify-center">
-			<div className="flex items-center gap-3 mb-5">
-				<button onClick={handlePrev} disabled={currentIndex === 0}>
-				<ChevronLeft size={30} />
-				</button>
-				<h1 className="text-xl text-white">PROJECTS</h1>
-				<button onClick={handleNext} disabled={currentIndex + 4 >= projects.length}>
-				<ChevronRight size={30} />
-				</button>
-			</div>
-
-			<div className="grid grid-cols-2 grid-rows-2 gap-5 px-10">
-				{visibleProjects.map((project, i) => (
-				<div
-					key={i}
-					className="h-72 w-full py-5 px-5 flex flex-col justify-center items-center gap-3 bg-[#191919] rounded-lg"
-				>
-					<div className="w-full flex items-center justify-between">
-					<p className="text-xs lg:text-base">/{project.category}</p>
-					<div className="flex items-center gap-2">
-						<button className="h-4/5 text-xs lg:text-base px-3 rounded-md">
-						soon
-						</button>
-						<img
-						src="https://skillicons.dev/icons?i=github"
-						alt="GitHub"
-						className="h-6 w-6 md:h-8 md:w-8"
-						/>
-					</div>
+		<div className='h-full page-scroll'>
+			
+				<div className="w-full flex flex-col lg:gap-24 items-center ">
+					<div className="flex items-center h-28 gap-3">
+						<h1 className="text-xl xl:text-5xl font-port_lligat_slab font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">What I’ve Been Working On</h1>
 					</div>
 
-					<h1 className="text-center text-sm lg:text-base">{project.name}</h1>
-					<p className="text-justify text-xs lg:text-sm xl:text-base overflow-hidden">
-					{project.description}
-					</p>
-
-					<div className="flex flex-col gap-2 items-center">
-					<h3 className="text-xs lg:text-sm xl:text-base">Built with:</h3>
-					<div className="flex gap-2 flex-wrap justify-center">
-						{project.buildwith.map((tech, index) => (
-						<img
-							key={index}
-							src={tech.icon}
-							alt={tech.name}
-							className="h-6 w-6 md:h-8 md:w-8"
-							title={tech.name}
-						/>
+					<div className='w-full xl:w-7xl'>
+						<div className="h-full w-full flex flex-col items-center justify-center gap-16 text-neutral-300 xl:gap-28">
+						{projects.map((project, i) => (
+							<ProjectItem key={i} project={project} i={i} />
 						))}
+						</div>
 					</div>
-					</div>
+					<div  className={`h-[10dvh] w-full items-center pt-10 flex`} >
+						<motion.div initial={{x: 100, transition: { duration: 1 },}} animate={{x:0, transition: { duration: 0 },}} exit={{x:100, transition: { duration: 0.5 },}} className="flex gap-2">
+							<div className="w-1 xl:w-2 rounded-[1px] bg-gradient-to-r from-cyan-400 to-blue-500" />
+							<h2 className="text-[#B1B2B5] font-adamina text-xs min-2xl:text-lg" style={{ fontFamily: "Adamina, serif" }} > van.kzr@gmail.com </h2>
+						</motion.div>
+					</div>					
 				</div>
-				))}
-			</div>
+			
 		</div>
+		
+		
 	);
 };
 

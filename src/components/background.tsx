@@ -1,32 +1,36 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
+import { animate, AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
 import { useLocation } from "react-router-dom";
-import { elements } from "./background-elements";
-import { useTheme } from '../context/ThemeContext';
+import { elementsByPath } from "./background-elements";
 
 const Background = React.memo(() => {
     const location = useLocation();
     const pathname = location.pathname; 
+    const [isAnimating, setIsAnimating] = useState(true);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-    const { color } = useTheme();
-
-    const gradienBackground = `linear-gradient(to bottom, #131313, ${color} 25%, ${color} 75%, #131313)`;
-
-    const opacityChoices = [1];
-    const getRandomOpacity = () => opacityChoices[Math.floor(Math.random() * opacityChoices.length)];
+    useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+    
+    const elements = useMemo(() => {
+        return elementsByPath[pathname] || [];
+    }, [pathname]);
 
     const variants = useMemo(() => ({
-        initial: { x: -420, opacity: 0, y: -500 },
+        initial: { x: 300, opacity: 0, y: -250 },
         animate: { x: 0, opacity: 1, y: 0 },
-        exit: { x: 370, opacity: 0, y: 440 },
+        exit: { x: 1, opacity: 0, y: 1 },
     }), []);
 
     const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
-    const [randomOpacities, setRandomOpacities] = useState(elements.map(() => getRandomOpacity()));
+    const widthMotion = useMotionValue(windowWidth);
 
     useEffect(() => {
-        setRandomOpacities(elements.map(() => getRandomOpacity()));
-    }, [pathname]);
+        widthMotion.set(windowWidth);
+    }, [windowWidth, widthMotion]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -35,7 +39,6 @@ const Background = React.memo(() => {
                 height: window.innerHeight,
             });
         };
-
         handleResize();
         window.addEventListener('resize', handleResize);
         return () => {
@@ -43,16 +46,31 @@ const Background = React.memo(() => {
         };
     }, []);
 
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
+    const mouseX = useMotionValue(typeof window !== "undefined" ? window.innerWidth / 2 : 0);
+    const mouseY = useMotionValue(typeof window !== "undefined" ? window.innerHeight / 2 : 0);
 
-    const moveX = useTransform(mouseX, [0, windowSize.width], [50, -50]);
-    const moveY = useTransform(mouseY, [0, windowSize.height], [25, -25]);
+    const moveX = useTransform(mouseX, [0, windowSize.width], [0, -35]);
+    const moveY = useTransform(mouseY, [0, windowSize.height], [0, -35]);
 
-    const handleMouseMove = useCallback((e: MouseEvent) => {
-        mouseX.set(e.clientX);
-        mouseY.set(e.clientY);
-    }, [mouseX, mouseY]);
+    useEffect(() => {
+        if (!windowSize.width || !windowSize.height) return;
+
+        const controlsX = animate(mouseX, window.innerWidth / 2, { duration: 0.6, ease: "easeOut" });
+        const controlsY = animate(mouseY, window.innerHeight / 2, { duration: 0.6, ease: "easeOut" });
+
+        return () => {
+            controlsX.stop();
+            controlsY.stop();
+        };
+    }, [pathname, mouseX, mouseY, windowSize]);
+
+    const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+        animate(mouseX, e.clientX, { type: "spring", stiffness: 50, damping: 20 });
+        animate(mouseY, e.clientY, { type: "spring", stiffness: 50, damping: 20 });
+    },
+    [mouseX, mouseY]
+    );
 
     // useEffect(() => {
     //     if (windowSize.width && windowSize.height) {
@@ -63,31 +81,39 @@ const Background = React.memo(() => {
     //     };
     // }, [handleMouseMove, windowSize]);
 
+    const scale = useTransform(widthMotion, [320, 1920], [1, 2.45], {
+        clamp: true,
+    });
+
     return (
-        <div className="absolute h-full w-full overflow-hidden">
-            <div className="h-full w-full bg-black/0 z-[1] absolute"></div>
+        <div className="absolute h-1/2 w-full bottom-0 right-0">
             <AnimatePresence mode="wait">
-                <motion.div key={pathname}>
+                <motion.div
+                key={pathname}
+                className="relative h-full"
+                variants={variants} 
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.8, ease: "easeInOut" }}
+                style={{
+                    scale, 
+                    transformOrigin: "right bottom",
+                }}>
                 {elements.map((elem, index) => (
                     <motion.div
                     key={index}
                     className={elem.className}
                     style={{
                         ...elem.style,
-                        backgroundImage: gradienBackground,
+                        background: "linear-gradient(0deg, rgba(19, 19, 19, 0) 0%, #00D8FF 15%, #008CFF 85%, rgba(19, 19, 19, 0) 100%)",
                         x: moveX,
                         y: moveY,
-                        rotate: -40,
+                        rotate: 50,
                     }}
-                    variants={variants}
-                    initial="initial"
-                    animate={{
-                        ...variants.animate,
-                        opacity: randomOpacities[index],
-                    }}
-                    exit="exit"
                     transition={{ duration: elem.transition.duration, ease: "linear" }}
-                    />
+                    onAnimationStart={() => setIsAnimating(true)}
+                    onAnimationComplete={() => setIsAnimating(false)}/>
                 ))}
                 </motion.div>
             </AnimatePresence>

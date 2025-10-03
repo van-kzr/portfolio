@@ -9,7 +9,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
     <ThemeProvider>
-          <Layout />
+          <Layout /> 
     </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>,

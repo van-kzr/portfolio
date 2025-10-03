@@ -15,6 +15,37 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html, body {
+  overscroll-behavior-y: contain;
+}
+
+body, html {
+  touch-action: pan-y;
+}
+
+.scrollable-content {
+  -ms-overflow-style: none;  /* IE dan Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+/* Chrome, Safari, dan Opera */
+.scrollable-content::-webkit-scrollbar {
+  display: none;
+}
+
+
+@layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+
 @font-face {
     font-family: 'Port Lligat Slab';
     src: url('/src/assets/fonts/Port_Lligat_Slab/PortLligatSlab-Regular.ttf') format('truetype');
@@ -22,7 +53,22 @@
     font-style: normal;
 }
 
-body {
-      font-family: 'Port Lligat Slab', sans-serif;
+@font-face {
+    font-family: 'Adamina';
+    src: url('/src/assets/fonts/Adamina/Adamina-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
+
+@theme {
+  --font-adamina: "Adamina", serif;
+  --font-port_lligat_slab: "Port Lligat Slab", serif;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  --breakpoint-3xl: 1920px;
+  --breakpoint-4xl: 2560px;
+}
