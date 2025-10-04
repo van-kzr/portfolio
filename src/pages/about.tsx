@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from "framer-motion";
-import TextStrokeWrapper from "../components/stroke-teks";
+// import TextStrokeWrapper from "../components/stroke-teks";
 
 const Home = () => {
 
@@ -19,7 +19,7 @@ const Home = () => {
 						<div className="w-full flex flex-col justify-center items-center gap-2">
 							<motion.div variants={variant} initial="initial" animate="animate" exit="exit" transition={{ type: "tween", duration: 0.6, ease: "easeOut" }} >
 								<div className="text-2xl sm:text-3xl lg:text-3xl lg:py-5 text-[#f7f6f6]">
-									<TextStrokeWrapper strokeWidth={0}>ABOUT</TextStrokeWrapper>
+									ABOUT
 								</div>
 							</motion.div>
 						</div>

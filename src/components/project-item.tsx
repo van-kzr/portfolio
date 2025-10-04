@@ -37,22 +37,22 @@ type Project = {
 
 const ProjectItem = ({ project, i }: { project: Project; i: number }) => {
   const { ref, inView } = useInView({
-  threshold: 0.4,
+  threshold: 0.3,
   rootMargin: "-15% 0px 0px 0px", // abaikan area header 15vh
 });
 
 
 
   return (
-    <div className={`h-40 xl:h-56 border relative w-full `}>
+    <div className={`h-40 xl:h-56 relative w-full `}>
         <motion.div
         ref={ref}
         key={i}
         className={`h-full translate-x-10 w-full flex flex-col gap-5 xl:gap-24 ${
             i % 2 === 0 ? "xl:flex-row" : "xl:flex-row-reverse"
         }`}
-        initial={{ opacity: 0, x: 0 }}
-        animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, x: 0 }}
+        initial={{ opacity: 0, x: i % 2 === 0 ? 100 : -100 }}
+        animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: i % 2 === 0 ? 100 : -100}}
         transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.2 }}
         >
         {/* Gambar */}

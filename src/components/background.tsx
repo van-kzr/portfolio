@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { animate, AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import { elementsByPath } from "./background-elements";
@@ -6,7 +6,7 @@ import { elementsByPath } from "./background-elements";
 const Background = React.memo(() => {
     const location = useLocation();
     const pathname = location.pathname; 
-    const [isAnimating, setIsAnimating] = useState(true);
+    // const [isAnimating, setIsAnimating] = useState(true);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
     useEffect(() => {
@@ -64,13 +64,13 @@ const Background = React.memo(() => {
         };
     }, [pathname, mouseX, mouseY, windowSize]);
 
-    const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-        animate(mouseX, e.clientX, { type: "spring", stiffness: 50, damping: 20 });
-        animate(mouseY, e.clientY, { type: "spring", stiffness: 50, damping: 20 });
-    },
-    [mouseX, mouseY]
-    );
+    // const handleMouseMove = useCallback(
+    // (e: MouseEvent) => {
+    //     animate(mouseX, e.clientX, { type: "spring", stiffness: 50, damping: 20 });
+    //     animate(mouseY, e.clientY, { type: "spring", stiffness: 50, damping: 20 });
+    // },
+    // [mouseX, mouseY]
+    // );
 
     // useEffect(() => {
     //     if (windowSize.width && windowSize.height) {
@@ -112,8 +112,9 @@ const Background = React.memo(() => {
                         rotate: 50,
                     }}
                     transition={{ duration: elem.transition.duration, ease: "linear" }}
-                    onAnimationStart={() => setIsAnimating(true)}
-                    onAnimationComplete={() => setIsAnimating(false)}/>
+                    // onAnimationStart={() => setIsAnimating(true)}
+                    // onAnimationComplete={() => setIsAnimating(false)}
+                    />
                 ))}
                 </motion.div>
             </AnimatePresence>

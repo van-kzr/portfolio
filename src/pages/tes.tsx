@@ -2,17 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { AnimatePresence, motion, Variants } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Scrollbar from "smooth-scrollbar";
 
 import Home from '../pages/home';
 import Project from '../pages/project';
-
-const pageVariants: Variants = {
-  initial: { opacity: 0, scale: 0.95 },
-  animate: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
-  exit: { opacity: 0, scale: 0.95, transition: { duration: 0.55 } },
-};
 
 export default function Layout() {
   const location = useLocation();
@@ -51,10 +45,6 @@ export default function Layout() {
             <motion.div
               key={location.pathname}
               className="w-full z-10"
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              variants={pageVariants}
             >
               <Routes location={location}>
                 <Route path="/" element={<Home />} />

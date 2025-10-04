@@ -10,16 +10,15 @@ import Navigation from './components/navigation';
 import SmoothScroll from './components/smooth_scroll';
 import usePageSwipe from './components/usePageSwipe';
 
+
 const pageVariants: Variants = {
-	initial: { opacity: 0, scale: .95 },
+	initial: { opacity: 0},
 	animate: {
 		opacity: 1,
-		scale: 1,
 		transition: { duration: 0.5 },
 	},
 	exit: {
 		opacity: 0,
-		scale: 0.95,
 		transition: { duration: 0.55 },
 	},
 };
@@ -100,7 +99,8 @@ export default function Layout() {
 						</motion.div>
 					</AnimatePresence>
 					</SmoothScroll>
-					
+
+					{/* <Footer /> */}
 				</div>
 			</div>
 

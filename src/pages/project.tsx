@@ -40,7 +40,7 @@ const Home = () => {
 	return (
 		<div className='h-full page-scroll'>
 			
-				<div className="w-full flex flex-col lg:gap-24 items-center ">
+				<div className="w-full flex flex-col lg:gap-32 items-center ">
 					<div className="flex items-center h-28 gap-3">
 						<h1 className="text-xl xl:text-5xl font-port_lligat_slab font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">What I’ve Been Working On</h1>
 					</div>
@@ -52,7 +52,7 @@ const Home = () => {
 						))}
 						</div>
 					</div>
-					<div  className={`h-[10dvh] w-full items-center pt-10 flex`} >
+					<div  className={`h-[12dvh] w-full flex items-center xl:pt-0 `} >
 						<motion.div initial={{x: 100, transition: { duration: 1 },}} animate={{x:0, transition: { duration: 0 },}} exit={{x:100, transition: { duration: 0.5 },}} className="flex gap-2">
 							<div className="w-1 xl:w-2 rounded-[1px] bg-gradient-to-r from-cyan-400 to-blue-500" />
 							<h2 className="text-[#B1B2B5] font-adamina text-xs min-2xl:text-lg" style={{ fontFamily: "Adamina, serif" }} > van.kzr@gmail.com </h2>
