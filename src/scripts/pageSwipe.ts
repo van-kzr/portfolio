@@ -1,64 +1,50 @@
-
 import { navigate } from "astro:transitions/client";
 
 const base = import.meta.env.BASE_URL;
 
-const routes = [
-	"/",
-	"/projects",
-];
-
+const routes = {
+	landing: base,
+	projects: `${base}projects`,
+};
 
 let initialized = false;
-
 let isNavigating = false;
-
-let lastNavigationTime = 0;
 
 let touchStartY: number | null = null;
 
-const SCROLL_DELAY = 1000;
+const NAVIGATION_DELAY = 600;
+const EDGE_THRESHOLD = 5;
+const SWIPE_THRESHOLD = 50;
 
 
 /* =====================================
    CURRENT ROUTE
 ===================================== */
 
-function getCurrentIndex() {
-
-	const currentPath =
-		window.location.pathname;
-
-	const index =
-		routes.indexOf(currentPath);
-
-	return index;
+function getCurrentPath(): string {
+	return window.location.pathname;
 }
 
 
 /* =====================================
-   TOP / BOTTOM
+   SCROLL POSITION
 ===================================== */
 
 function isTopVisible(
 	container: HTMLElement
-) {
-
-	return container.scrollTop <= 5;
-
+): boolean {
+	return container.scrollTop <= EDGE_THRESHOLD;
 }
 
 
 function isBottomVisible(
 	container: HTMLElement
-) {
-
+): boolean {
 	return (
 		container.scrollTop +
-		container.clientHeight >=
-		container.scrollHeight - 5
+			container.clientHeight >=
+		container.scrollHeight - EDGE_THRESHOLD
 	);
-
 }
 
 
@@ -118,7 +104,6 @@ async function handleNavigation(direction: number) {
 function handleWheel(
 	event: WheelEvent
 ) {
-
 	const container =
 		document.querySelector<HTMLElement>(
 			".scrollable-content"
@@ -137,34 +122,29 @@ function handleWheel(
 	const canScrollDown =
 		container.scrollTop +
 			container.clientHeight <
-		container.scrollHeight - 5;
+		container.scrollHeight -
+			EDGE_THRESHOLD;
 
 
 	const canScrollUp =
-		container.scrollTop > 5;
+		container.scrollTop >
+		EDGE_THRESHOLD;
 
 
 	/*
-	 * Masih bisa scroll.
-	 *
-	 * Biarkan SmoothScroll
-	 * menangani scrolling.
+	 * Masih bisa scrolling.
 	 */
 
 	if (
 		(scrollingDown && canScrollDown) ||
 		(scrollingUp && canScrollUp)
 	) {
-
 		return;
-
 	}
 
 
 	/*
-	 * Sudah mentok.
-	 *
-	 * Pindah halaman.
+	 * Sudah mencapai edge.
 	 */
 
 	event.preventDefault();
@@ -173,7 +153,6 @@ function handleWheel(
 	handleNavigation(
 		scrollingDown ? 1 : -1
 	);
-
 }
 
 
@@ -184,7 +163,6 @@ function handleWheel(
 function handleTouchStart(
 	event: TouchEvent
 ) {
-
 	if (isNavigating) {
 		return;
 	}
@@ -193,12 +171,13 @@ function handleTouchStart(
 	const touch =
 		event.touches[0];
 
-	if (!touch) return;
+	if (!touch) {
+		return;
+	}
 
 
 	touchStartY =
 		touch.clientY;
-
 }
 
 
@@ -209,7 +188,6 @@ function handleTouchStart(
 function handleTouchEnd(
 	event: TouchEvent
 ) {
-
 	if (
 		isNavigating ||
 		touchStartY === null
@@ -221,7 +199,9 @@ function handleTouchEnd(
 	const touch =
 		event.changedTouches[0];
 
-	if (!touch) return;
+	if (!touch) {
+		return;
+	}
 
 
 	const container =
@@ -229,7 +209,9 @@ function handleTouchEnd(
 			".scrollable-content"
 		);
 
-	if (!container) return;
+	if (!container) {
+		return;
+	}
 
 
 	const diffY =
@@ -237,18 +219,17 @@ function handleTouchEnd(
 		touch.clientY;
 
 
-	/*
-	 * Reset
-	 */
-
 	touchStartY = null;
 
 
 	/*
-	 * Minimal swipe
+	 * Bukan swipe yang cukup jauh.
 	 */
 
-	if (Math.abs(diffY) < 50) {
+	if (
+		Math.abs(diffY) <
+		SWIPE_THRESHOLD
+	) {
 		return;
 	}
 
@@ -258,15 +239,14 @@ function handleTouchEnd(
 
 
 	/*
-	 * Swipe DOWN
-	 * dan sudah di bawah
+	 * Swipe ke bawah
+	 * saat sudah berada di bawah.
 	 */
 
 	if (
 		direction === 1 &&
 		isBottomVisible(container)
 	) {
-
 		event.preventDefault();
 
 		handleNavigation(1);
@@ -276,21 +256,18 @@ function handleTouchEnd(
 
 
 	/*
-	 * Swipe UP
-	 * dan sudah di atas
+	 * Swipe ke atas
+	 * saat sudah berada di atas.
 	 */
 
 	if (
 		direction === -1 &&
 		isTopVisible(container)
 	) {
-
 		event.preventDefault();
 
 		handleNavigation(-1);
-
 	}
-
 }
 
 
@@ -299,10 +276,10 @@ function handleTouchEnd(
 ===================================== */
 
 export function initPageSwipe() {
-
 	if (initialized) {
 		return;
 	}
+
 
 	initialized = true;
 
@@ -335,7 +312,11 @@ export function initPageSwipe() {
 
 
 	console.log(
-		"[PageSwipe] initialized"
+		"[PageSwipe] initialized",
+		{
+			base,
+			landing: routes.landing,
+			projects: routes.projects,
+		}
 	);
-
 }
