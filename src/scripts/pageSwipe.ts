@@ -1,10 +1,30 @@
 import { navigate } from "astro:transitions/client";
 
-const base = import.meta.env.BASE_URL;
+const base =
+	import.meta.env.BASE_URL;
+
+	/* =====================================
+   NORMALIZE PATH
+===================================== */
+
+function normalizePath(
+	path: string,
+): string {
+
+	if (
+		path.length > 1 &&
+		path.endsWith("/")
+	) {
+		return path.slice(0, -1);
+	}
+
+	return path;
+}
+
 
 const routes = {
-	landing: base,
-	projects: `${base}projects`,
+	landing: normalizePath(base),
+	projects: normalizePath(`${base}projects`),
 };
 
 let initialized = false;
@@ -34,8 +54,12 @@ function debug(label: string, data?: unknown) {
    CURRENT PATH
 ===================================== */
 
-function getCurrentPath() {
-	return window.location.pathname;
+function getCurrentPath(): string {
+
+	return normalizePath(
+		window.location.pathname,
+	);
+
 }
 
 
