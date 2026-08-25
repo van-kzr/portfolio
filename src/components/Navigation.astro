@@ -15,12 +15,12 @@ const links = [
 ];
 ---
 
-<nav class="navigation w-16 flex flex-col items-start gap-5">
+<nav class="navigation w-16 flex flex-col items-start gap-3">
 	{
 		links.map((link) => (
 			<a
 				href={link.href}
-				class="block h-20 w-full"
+				class="flex h-2 w-full"
 			>
 				<div
 					class="nav-item h-full w-full"
@@ -78,7 +78,6 @@ const links = [
 		flex-direction: column;
 		align-items: flex-start;
 
-		gap: 1.25rem;
 	}
 
 
@@ -90,7 +89,7 @@ const links = [
 		position: relative;
 
 		width: 100%;
-		height: 4px;
+		height: 0.50rem;
 
 		border-radius: 2px;
 
@@ -138,40 +137,11 @@ const links = [
 	}
 
 
-	/* ================================
-	   HOVER
-	================================ */
-
-	/* .nav-item:not(.active):hover::before {
-		background: #8a8a8a;
-
-		transform: scaleX(0.7);
-	} */
-
-
-	/* ================================
-	   LINK
-	================================ */
-
-
 	.nav-item span {
 		display: block;
 
 		width: 100%;
 		height: 100%;
-	}
-
-
-	/* ================================
-	   LARGE SCREEN
-	================================ */
-
-	@media (min-width: 1536px) {
-
-		.nav-item {
-			height: 6px;
-		}
-
 	}
 
 </style>
