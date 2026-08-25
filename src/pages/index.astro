@@ -1,0 +1,68 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Home">
+
+	<div class="h-[50dvh] xl:h-[55dvh] transition-all duration-300 ease-in-out w-full flex items-center bg-red-500overflow-hidden">
+
+		<div class="flex flex-col justify-center gap-2 pb-56 pt-16! lg:pt-48! xl:pt-48! min-[720px]:pb-1">
+
+			<div class="flex flex-col gap-2 px-5 lg:px-16 xl:px-24 2xl:px-32 min-[1908px]:px-52">
+
+				<div class="flex flex-col gap-2">
+
+					<!-- NAME -->
+					<div >
+						<h1 class="font-port_lligat_slab text-2xl lg:text-3xl xl:text-4xl min-[1908px]:text-5xl text-[#C2C2C2] flex gap-3">
+							Hi I’m
+							<span class="font-bold text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500">
+								AHMAD YOVAN
+							</span>
+						</h1>
+					</div>
+
+
+					<!-- DESCRIPTION -->
+					<div class="w-80 lg:w-md xl:w-lg min-[1908px]:w-2xl ">
+						<h2 class="text-sm lg:text-base xl:text-lg min-[1908px]:text-2xl text-justify text-[#C2C2C2] font-adamina">
+							Just starting my programming journey — excited to learn, build, and explore new technologies along the way.
+						</h2>
+					</div>
+
+				</div>
+
+
+				<!-- BUTTON -->
+				<div class="flex justify-center lg:justify-start pt-5!">
+
+					<div class="px-3! py-2! 2xl:py-3! bg-[#1D1D1D] w-fit rounded-sm animate-slide-in-left">
+
+						<button class="text-md lg:text-lg xl:text-xl text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500 font-adamina">
+                            <a class="" href="/projects">see my work</a>
+						</button>
+
+					</div>
+
+				</div>
+
+			</div>
+
+
+			<!-- MOBILE EMAIL -->
+			<div class="relative h-20 w-full min-[720px]:hidden animate-slide-in-left">
+
+				<h2
+					class="absolute text-[#B1B2B5] font-adamina left-0 top-0 translate-y-1/3 origin-left [writing-mode:vertical-rl] text-xs"
+					style="font-family: Adamina, serif;"
+				>
+					van.kzr@gmail.com
+				</h2>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</BaseLayout>

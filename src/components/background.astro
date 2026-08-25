@@ -1,0 +1,473 @@
+---
+import { elementsByPath } from "./background-elements";
+
+const pathname = Astro.url.pathname;
+
+const elements = elementsByPath[pathname] ?? [];
+---
+
+<div class="background">
+
+	<div class="background-content">
+
+		{
+			elements.map((elem) => (
+				<div
+					class:list={[
+						"background-element",
+						elem.className,
+					]}
+					style={`
+						${Object.entries(elem.style)
+							.map(
+								([key, value]) =>
+									`${key}: ${value};`
+							)
+							.join("")}
+
+						--duration:
+							${elem.transition.duration}s;
+					`}
+				/>
+			))
+		}
+
+	</div>
+
+</div>
+
+
+<script>
+	const initBackground = () => {
+
+		const background =
+			document.querySelector<HTMLElement>(
+				".background"
+			);
+
+		if (!background) {
+			return;
+		}
+
+
+		/*
+		 * ========================================
+		 * MOUSE PARALLAX
+		 * ========================================
+		 */
+
+		let targetX =
+			window.innerWidth / 2;
+
+		let targetY =
+			window.innerHeight / 2;
+
+		let currentX = targetX;
+		let currentY = targetY;
+
+		let animationFrame = 0;
+
+
+		const updateMouse = (
+			event: MouseEvent
+		) => {
+
+			targetX = event.clientX;
+			targetY = event.clientY;
+
+		};
+
+
+		/*
+		 * ========================================
+		 * ANIMATION LOOP
+		 * ========================================
+		 */
+
+		const animate = () => {
+
+			currentX +=
+				(targetX - currentX) * 0.05;
+
+			currentY +=
+				(targetY - currentY) * 0.05;
+
+
+			/*
+			 * -35 sampai +35 px
+			 *
+			 * Sama seperti:
+			 *
+			 * useTransform(
+			 *   mouseX,
+			 *   [0, width],
+			 *   [0, -35]
+			 * )
+			 */
+
+			const x =
+				(
+					(currentX /
+						window.innerWidth) -
+					0.5
+				) * -70;
+
+
+			const y =
+				(
+					(currentY /
+						window.innerHeight) -
+					0.5
+				) * -70;
+
+
+			background.style.setProperty(
+				"--mouse-x",
+				`${x}px`
+			);
+
+			background.style.setProperty(
+				"--mouse-y",
+				`${y}px`
+			);
+
+
+			animationFrame =
+				requestAnimationFrame(
+					animate
+				);
+		};
+
+
+		/*
+		 * ========================================
+		 * START
+		 * ========================================
+		 */
+
+		window.addEventListener(
+			"mousemove",
+			updateMouse,
+			{
+				passive: true,
+			}
+		);
+
+
+		animate();
+
+
+		/*
+		 * ========================================
+		 * CLEANUP
+		 * ========================================
+		 */
+
+		const cleanup = () => {
+
+			cancelAnimationFrame(
+				animationFrame
+			);
+
+			window.removeEventListener(
+				"mousemove",
+				updateMouse
+			);
+
+		};
+
+
+		document.addEventListener(
+			"astro:before-swap",
+			cleanup,
+			{
+				once: true,
+			}
+		);
+
+	};
+
+
+	/*
+	 * Astro ClientRouter
+	 *
+	 * Dipanggil setiap kali:
+	 *
+	 * /
+	 * ↓
+	 * /projects
+	 *
+	 * atau
+	 *
+	 * /projects
+	 * ↓
+	 * /
+	 */
+
+	document.addEventListener(
+		"astro:page-load",
+		initBackground
+	);
+</script>
+
+
+<style>
+
+	/*
+	 * ========================================
+	 * BACKGROUND CONTAINER
+	 * ========================================
+	 */
+
+	.background {
+
+		position: absolute;
+
+		right: 0;
+		bottom: 0;
+
+		width: 100%;
+		height: 100%;
+
+		overflow: hidden;
+
+		pointer-events: none;
+
+		--mouse-x: 0px;
+		--mouse-y: 0px;
+
+	}
+
+
+	/*
+	 * ========================================
+	 * CONTENT
+	 * ========================================
+	 */
+
+	.background-content {
+
+		position: relative;
+
+		width: 100%;
+		height: 100%;
+
+		transform-origin:
+			right bottom;
+
+		/*
+		 * Posisi awal
+		 *
+		 * Dari kode Framer Motion:
+		 *
+		 * initial:
+		 * x: 300
+		 * y: -250
+		 * opacity: 0
+		 */
+
+		transform:
+			translate3d(
+				300px,
+				-250px,
+				0
+			)
+			scale(
+				var(--background-scale, 1)
+			);
+
+		opacity: 0;
+
+		animation:
+			background-enter
+			0.8s
+			ease-in-out
+			forwards;
+
+		will-change:
+			transform,
+			opacity;
+
+	}
+
+
+	/*
+	 * ========================================
+	 * ELEMENT
+	 * ========================================
+	 */
+
+	.background-element {
+
+		position: absolute;
+
+		/*
+		 * Gradient dari kode lama
+		 */
+
+		background:
+			linear-gradient(
+				0deg,
+				rgba(19, 19, 19, 0) 0%,
+				#00D8FF 15%,
+				#008CFF 85%,
+				rgba(19, 19, 19, 0) 100%
+			);
+
+
+		/*
+		 * Parallax mouse
+		 */
+
+		transform:
+			translate3d(
+				var(--mouse-x),
+				var(--mouse-y),
+				0
+			)
+			rotate(50deg);
+
+
+		/*
+		 * Mengikuti transition.duration
+		 * dari background-elements.ts
+		 */
+
+		transition:
+			transform
+			var(--duration)
+			linear;
+
+
+		will-change:
+			transform;
+
+	}
+
+
+	/*
+	 * ========================================
+	 * ENTER ANIMATION
+	 * ========================================
+	 */
+
+	@keyframes background-enter {
+
+		from {
+
+			opacity: 0;
+
+			transform:
+				translate3d(
+					300px,
+					-250px,
+					0
+				)
+				scale(
+					var(--background-scale, 1)
+				);
+
+		}
+
+
+		to {
+
+			opacity: 1;
+
+			transform:
+				translate3d(
+					0,
+					0,
+					0
+				)
+				scale(
+					var(--background-scale, 1)
+				);
+
+		}
+
+	}
+
+
+	/*
+	 * ========================================
+	 * RESPONSIVE SCALE
+	 * ========================================
+	 */
+
+	.background {
+
+		--background-scale: 1;
+
+	}
+
+
+	@media (min-width: 768px) {
+
+		.background {
+
+			--background-scale: 1.5;
+
+		}
+
+	}
+
+
+	@media (min-width: 1280px) {
+
+		.background {
+
+			--background-scale: 2;
+
+		}
+
+	}
+
+
+	@media (min-width: 1920px) {
+
+		.background {
+
+			--background-scale: 2.45;
+
+		}
+
+	}
+
+
+	/*
+	 * ========================================
+	 * REDUCED MOTION
+	 * ========================================
+	 */
+
+	@media (
+		prefers-reduced-motion: reduce
+	) {
+
+		.background-content {
+
+			animation: none;
+
+			opacity: 1;
+
+			transform:
+				scale(
+					var(--background-scale, 1)
+				);
+
+		}
+
+
+		.background-element {
+
+			transform:
+				rotate(50deg);
+
+			transition: none;
+
+		}
+
+	}
+
+</style>

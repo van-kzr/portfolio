@@ -1,0 +1,337 @@
+---
+import { ClientRouter } from "astro:transitions";
+
+import Navigation from "../components/Navigation.astro";
+import Footer from "../components/Footer.astro";
+import Background from "../components/background.astro";
+import "../styles/global.css";
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+
+const pageTransition = {
+	forwards: {
+		old: {
+			name: "slide-out-up",
+			duration: "0.6s",
+			easing: "cubic-bezier(0.65, 0, 0.35, 1)",
+			fillMode: "both",
+		},
+
+		new: {
+			name: "slide-in-up",
+			duration: "0.6s",
+			easing: "cubic-bezier(0.65, 0, 0.35, 1)",
+			fillMode: "both",
+		},
+	},
+
+	backwards: {
+		old: {
+			name: "slide-out-down",
+			duration: "0.6s",
+			easing: "cubic-bezier(0.65, 0, 0.35, 1)",
+			fillMode: "both",
+		},
+
+		new: {
+			name: "slide-in-down",
+			duration: "0.6s",
+			easing: "cubic-bezier(0.65, 0, 0.35, 1)",
+			fillMode: "both",
+		},
+	},
+};
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+
+		<link
+			rel="icon"
+			type="image/svg+xml"
+			href="/favicon.svg"
+		/>
+
+		<link
+			rel="icon"
+			href="/favicon.ico"
+		/>
+
+		<meta
+			name="viewport"
+			content="width=device-width"
+		/>
+
+		<meta
+			name="generator"
+			content={Astro.generator}
+		/>
+
+		<title>{title}</title>
+
+    <ClientRouter />
+	</head>
+
+	<body class="w-screen h-screen overflow-hidden bg-linear-to-b from-[#0B0B0B] to-[#171717]">
+
+		<div class="relative h-dvh w-full overflow-hidden">
+
+			<!-- ================================
+			     MAIN WRAPPER
+			================================ -->
+
+			<div class="relative z-10 w-full h-full px-5! sm:px-10!">				
+
+				<!-- ============================
+				     DESKTOP NAVIGATION
+				============================= -->
+
+				<div class="absolute top-0 left-0 h-dvh hidden items-center z-20 lg:px-20! lg:flex">
+					<Navigation />
+				</div>
+
+				<!-- ============================
+				     CONTENT
+				============================= -->
+
+				<div class="w-full lg:pl-10! xl:pl-10! h-full flex flex-col">
+
+					<!-- HEADER -->
+
+					<header class="w-full h-[10dvh] flex items-center shrink-0">
+
+						<a href="/" aria-label="Home" class=" font-port_lligat_slab text-4xl 2xl:text-7xl font-bold text-transparent bg-clip-text bg-linear-to-r from-cyan-400 	to-blue-500 " >
+							AY
+						</a>
+
+					</header>
+
+
+					<!-- ========================
+					     SCROLL CONTAINER
+					========================= -->
+
+					<main
+						class="px-5! sm:px-20! xl:pl-40! lg:pl-40! flex min-h-0 w-full flex-1 flex-col"
+						transition:animate={pageTransition}
+					>
+						<div
+							class="scrollable-content h-full w-full overflow-hidden overscroll-none"
+						>
+							<slot />
+						</div>
+					</main>
+
+					<!-- DESKTOP EMAIL -->
+					<div
+						id="desktop-email"
+						class:list={{
+							"hidden": Astro.url.pathname !== "/",
+							"absolute bottom-10 overflow-hidden": true,
+						}}
+					>
+
+						<div class="hidden min-[720px]:flex gap-2 animate-slide-in-left">
+
+							<div class="w-2 rounded-[1px] bg-linear-to-r from-cyan-400 to-blue-500"></div>
+
+							<h2
+								class="text-[#B1B2B5] font-adamina text-xs 2xl:text-lg"
+								style="font-family: Adamina, serif;"
+							>
+								van.kzr@gmail.com
+							</h2>
+
+						</div>
+
+					</div>
+
+					<Background />
+
+				</div>
+
+			</div>
+
+		</div>
+
+
+		<!-- ================================
+		     CLIENT SCRIPTS
+		================================ -->
+
+		<script>
+
+			import {
+				initSmoothScroll
+			} from "../scripts/smoothScroll";
+
+			import {
+				initPageSwipe
+			} from "../scripts/pageSwipe";
+
+			import {
+				getTransitionDirection
+			} from "../scripts/pageTransition";
+
+			document.addEventListener(
+				"astro:before-swap",
+				() => {
+
+					const direction =
+						getTransitionDirection();
+
+					document.documentElement.dataset.transitionDirection =
+						direction;
+
+				}
+			);
+
+
+			function initializePage() {
+
+				initSmoothScroll({
+					speed: 0.4,
+					touchSpeed: 0.6,
+					lerpFactor: 0.04,
+					damping: 0.4
+				});
+
+				initPageSwipe();
+
+			}
+
+
+			/*
+			 * Initial page load
+			 */
+
+			initializePage();
+
+
+			/*
+			 * Astro Client Router
+			 *
+			 * Jika nanti menggunakan
+			 * <ClientRouter />, Astro akan
+			 * memanggil event ini setelah
+			 * perpindahan halaman.
+			 */
+
+			document.addEventListener(
+				"astro:page-load",
+				initializePage
+			);
+
+		</script>
+
+
+		<!-- ================================
+		     LAYOUT STYLE
+		================================ -->
+
+		<style>
+
+
+			/* ============================
+			   SCROLL
+			============================= */
+
+			.scrollable-content {
+
+				-webkit-overflow-scrolling: touch;
+
+			}
+
+
+			/* ============================
+			   TABLET
+			============================= */
+
+			@media (min-width: 620px) {
+
+				.site-wrapper {
+
+					padding-left: 2.5rem;
+					padding-right: 2.5rem;
+
+				}
+
+			}
+
+
+			/* ============================
+			   LARGE
+			============================= */
+
+			@media (min-width: 820px) {
+
+				.site-wrapper {
+
+					padding-left: 4rem;
+					padding-right: 4rem;
+
+				}
+
+			}
+
+
+			/* ============================
+			   DESKTOP NAVIGATION
+			============================= */
+
+			@media (min-width: 1024px) {
+
+				.desktop-navigation {
+
+					display: flex;
+
+				}
+			}
+
+
+			/* ============================
+			   XL
+			============================= */
+
+			@media (min-width: 1280px) {
+
+				.site-header {
+
+					height: 15dvh;
+
+				}
+
+			}
+
+
+			/* ============================
+			   2XL
+			============================= */
+
+			@media (min-width: 1536px) {
+
+				.site-wrapper {
+
+					padding-left: 6rem;
+					padding-right: 6rem;
+
+				}
+
+				.desktop-navigation {
+
+					padding-left: 6rem;
+
+				}
+
+			}
+
+		</style>
+
+	</body>
+</html>

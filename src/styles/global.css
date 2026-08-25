@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  overscroll-behavior-y: contain;
+}
+
+body, html {
+  touch-action: pan-y;
+}
+
+.scrollable-content {
+  -ms-overflow-style: none;  /* IE dan Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+/* Chrome, Safari, dan Opera */
+.scrollable-content::-webkit-scrollbar {
+  display: none;
+}
+
+
+@layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+
+@font-face {
+    font-family: 'Port Lligat Slab';
+    src: url('/src/assets/fonts/Port_Lligat_Slab/PortLligatSlab-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Adamina';
+    src: url('/src/assets/fonts/Adamina/Adamina-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@theme {
+  --font-adamina: "Adamina", serif;
+  --font-port_lligat_slab: "Port Lligat Slab", serif;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  --breakpoint-3xl: 1920px;
+  --breakpoint-4xl: 2560px;
+}
+
+
+/* ========================================
+   FORWARD
+   / → /projects
+======================================== */
+
+html[data-transition-direction="forward"]
+::view-transition-old(page) {
+
+	animation:
+		home-out
+		0.6s
+		ease-in-out
+		both;
+
+}
+
+
+html[data-transition-direction="forward"]
+::view-transition-new(page) {
+
+	animation:
+		project-in
+		0.6s
+		ease-in-out
+		both;
+
+}
+
+
+/* ========================================
+   BACKWARD
+   /projects → /
+======================================== */
+
+/* =========================================
+	   / → /projects
+	   ========================================= */
+
+	@keyframes slide-out-up {
+
+		from {
+			transform: translateY(0);
+		}
+
+		to {
+			transform: translateY(-100%);
+		}
+
+	}
+
+
+	@keyframes slide-in-up {
+
+		from {
+			transform: translateY(100%);
+		}
+
+		to {
+			transform: translateY(0);
+		}
+
+	}
+
+
+	/* =========================================
+	   /projects → /
+	   ========================================= */
+
+	@keyframes slide-out-down {
+
+		from {
+			transform: translateY(0);
+		}
+
+		to {
+			transform: translateY(100%);
+		}
+
+	}
+
+
+	@keyframes slide-in-down {
+
+		from {
+			transform: translateY(-100%);
+		}
+
+		to {
+			transform: translateY(0);
+		}
+
+	}
