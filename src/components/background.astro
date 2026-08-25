@@ -1,7 +1,12 @@
 ---
 import { elementsByPath } from "./background-elements";
 
-const pathname = Astro.url.pathname;
+const base = import.meta.env.BASE_URL;
+
+const pathname = Astro.url.pathname.replace(
+	base,
+	"/"
+);
 
 const elements = elementsByPath[pathname] ?? [];
 ---

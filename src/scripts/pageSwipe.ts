@@ -1,9 +1,7 @@
 
 import { navigate } from "astro:transitions/client";
 
-import {
-	setTransitionDirection
-} from "./pageTransition";
+const base = import.meta.env.BASE_URL;
 
 const routes = [
 	"/",
@@ -81,11 +79,11 @@ async function handleNavigation(direction: number) {
 
 		// DOWN
 		if (
-			currentPath === "/" &&
+			currentPath === base &&
 			direction === 1
 		) {
 
-			await navigate("/projects");
+			await navigate(`${base}projects`);
 
 			return;
 		}
@@ -93,7 +91,7 @@ async function handleNavigation(direction: number) {
 
 		// UP
 		if (
-			currentPath === "/projects" &&
+			currentPath === `${base}projects` &&
 			direction === -1
 		) {
 

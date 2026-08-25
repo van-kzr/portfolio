@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title="Home">
@@ -35,17 +37,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 				<!-- BUTTON -->
 				<div class="flex justify-center lg:justify-start pt-5!">
-
 					<div class="px-3! py-2! 2xl:py-3! bg-[#1D1D1D] w-fit rounded-sm animate-slide-in-left">
-
-						<button class="text-md lg:text-lg xl:text-xl text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500 font-adamina">
-                            <a class="" href="/projects">see my work</a>
-						</button>
-
+						<a
+							href={`${base}projects`}
+							class="text-md lg:text-lg xl:text-xl text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-500 font-adamina"
+						>
+							see my work
+						</a>
 					</div>
-
 				</div>
-
 			</div>
 
 

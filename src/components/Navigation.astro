@@ -1,11 +1,15 @@
 ---
+
+const base = import.meta.env.BASE_URL;
+
+
 const links = [
 	{
-		href: "/",
+		href: base,
 		id: "landing",
 	},
 	{
-		href: "/projects",
+		href: `${base}projects`,
 		id: "projects",
 	},
 ];
@@ -14,15 +18,16 @@ const links = [
 <nav class="navigation w-16 flex flex-col items-start gap-5">
 	{
 		links.map((link) => (
-			<div
-				class="nav-item"
-				data-href={link.href}
-				data-id={link.id}
+			<a
+				href={link.href}
+				class="block h-20 w-full"
 			>
-				<a href={link.href}>
-					<span></span>
-				</a>
-			</div>
+				<div
+					class="nav-item h-full w-full"
+					data-href={link.href}
+					data-id={link.id}
+				/>
+			</a>
 		))
 	}
 
@@ -32,28 +37,25 @@ const links = [
 <script>
 	function updateNavigation() {
 		const currentPath = window.location.pathname;
+		const base = import.meta.env.BASE_URL;
 
 		document.querySelectorAll(".nav-item").forEach((item) => {
-
 			const href = item.getAttribute("data-href");
+			const id = item.getAttribute("data-id");
 
-			if (!href) return;
+			if (!href || !id) return;
 
 			const isActive =
-				currentPath === href ||
-				(
-					href !== "/" &&
-					currentPath.startsWith(href)
-				);
+				id === "landing"
+					? currentPath === base
+					: currentPath.startsWith(href);
 
 			item.classList.toggle("active", isActive);
 		});
 	}
 
-
 	// Saat halaman pertama dibuka
 	updateNavigation();
-
 
 	// Saat Astro melakukan client-side navigation
 	document.addEventListener(
@@ -150,16 +152,6 @@ const links = [
 	/* ================================
 	   LINK
 	================================ */
-
-	.nav-item a {
-		position: absolute;
-
-		inset: 0;
-
-		display: block;
-
-		z-index: 2;
-	}
 
 
 	.nav-item span {
