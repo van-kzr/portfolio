@@ -12,38 +12,66 @@ let isNavigating = false;
 
 let touchStartY: number | null = null;
 
-const NAVIGATION_DELAY = 600;
 const EDGE_THRESHOLD = 5;
 const SWIPE_THRESHOLD = 50;
+const NAVIGATION_LOCK = 800;
 
 
 /* =====================================
-   CURRENT ROUTE
+   DEBUG
 ===================================== */
 
-function getCurrentPath(): string {
+function debug(label: string, data?: unknown) {
+	console.log(
+		`%c[PageSwipe] ${label}`,
+		"color:#22d3ee;font-weight:bold;",
+		data ?? "",
+	);
+}
+
+
+/* =====================================
+   CURRENT PATH
+===================================== */
+
+function getCurrentPath() {
 	return window.location.pathname;
 }
 
 
 /* =====================================
-   SCROLL POSITION
+   CONTAINER
+===================================== */
+
+function getContainer() {
+	return document.querySelector<HTMLElement>(
+		".scrollable-content",
+	);
+}
+
+
+/* =====================================
+   SCROLL STATE
 ===================================== */
 
 function isTopVisible(
-	container: HTMLElement
-): boolean {
-	return container.scrollTop <= EDGE_THRESHOLD;
+	container: HTMLElement,
+) {
+	return (
+		container.scrollTop <=
+		EDGE_THRESHOLD
+	);
 }
 
 
 function isBottomVisible(
-	container: HTMLElement
-): boolean {
+	container: HTMLElement,
+) {
 	return (
 		container.scrollTop +
 			container.clientHeight >=
-		container.scrollHeight - EDGE_THRESHOLD
+		container.scrollHeight -
+			EDGE_THRESHOLD
 	);
 }
 
@@ -52,45 +80,111 @@ function isBottomVisible(
    NAVIGATION
 ===================================== */
 
-async function handleNavigation(direction: number) {
+/* =====================================
+   NAVIGATION
+===================================== */
 
-	if (isNavigating) return;
+async function handleNavigation(
+	direction: 1 | -1,
+) {
+
+	if (isNavigating) {
+
+		debug("BLOCKED: navigation locked");
+
+		return;
+	}
+
 
 	const currentPath =
-		window.location.pathname;
+		getCurrentPath();
+
 
 	isNavigating = true;
 
+
+	debug("NAVIGATION REQUEST", {
+		currentPath,
+		direction,
+	});
+
+
 	try {
 
-		// DOWN
+		/*
+		 * DOWN
+		 *
+		 * /portfolio/
+		 *      ↓
+		 * /portfolio/projects
+		 */
+
 		if (
-			currentPath === base &&
+			currentPath === routes.landing &&
 			direction === 1
 		) {
 
-			await navigate(`${base}projects`);
+			debug("DOWN → navigate(projects)", {
+				from: currentPath,
+				to: routes.projects,
+			});
+
+
+			await navigate(
+				routes.projects,
+			);
+
 
 			return;
 		}
 
 
-		// UP
+		/*
+		 * UP
+		 *
+		 * /portfolio/projects
+		 *          ↑
+		 * /portfolio/
+		 *
+		 * Gunakan history.back()
+		 * agar Astro mempertahankan
+		 * arah reverse transition.
+		 */
+
 		if (
-			currentPath === `${base}projects` &&
+			currentPath === routes.projects &&
 			direction === -1
 		) {
 
+			debug("UP → history.back()", {
+				from: currentPath,
+				to: routes.landing,
+			});
+
+
 			history.back();
+
 
 			return;
 		}
+
+
+		debug("NO NAVIGATION", {
+			currentPath,
+			direction,
+		});
 
 	} finally {
 
 		setTimeout(() => {
+
 			isNavigating = false;
-		}, 600);
+
+			debug(
+				"NAVIGATION UNLOCKED",
+			);
+
+		}, NAVIGATION_LOCK);
 
 	}
 
@@ -102,57 +196,117 @@ async function handleNavigation(direction: number) {
 ===================================== */
 
 function handleWheel(
-	event: WheelEvent
+	event: WheelEvent,
 ) {
+
 	const container =
-		document.querySelector<HTMLElement>(
-			".scrollable-content"
+		getContainer();
+
+
+	if (!container) {
+
+		debug(
+			"WHEEL: container not found",
 		);
 
-	if (!container) return;
+		return;
+	}
 
 
-	const scrollingDown =
-		event.deltaY > 0;
-
-	const scrollingUp =
-		event.deltaY < 0;
-
-
-	const canScrollDown =
-		container.scrollTop +
-			container.clientHeight <
-		container.scrollHeight -
-			EDGE_THRESHOLD;
-
-
-	const canScrollUp =
-		container.scrollTop >
-		EDGE_THRESHOLD;
+	const deltaY =
+		event.deltaY;
 
 
 	/*
-	 * Masih bisa scrolling.
+	 * Ignore extremely small
+	 * trackpad noise.
+	 */
+
+	if (Math.abs(deltaY) < 1) {
+		return;
+	}
+
+
+	const scrollingDown =
+		deltaY > 0;
+
+	const scrollingUp =
+		deltaY < 0;
+
+
+	const atTop =
+		isTopVisible(container);
+
+	const atBottom =
+		isBottomVisible(container);
+
+
+	debug("WHEEL", {
+		deltaY,
+		direction:
+			scrollingDown
+				? "DOWN"
+				: "UP",
+		atTop,
+		atBottom,
+		path:
+			getCurrentPath(),
+	});
+
+
+	/*
+	 * DOWN
+	 *
+	 * Hanya pindah halaman jika
+	 * benar-benar sudah berada
+	 * di bagian bawah.
 	 */
 
 	if (
-		(scrollingDown && canScrollDown) ||
-		(scrollingUp && canScrollUp)
+		scrollingDown &&
+		atBottom
 	) {
+
+		event.preventDefault();
+
+		debug(
+			"EDGE → DOWN NAVIGATION",
+		);
+
+		handleNavigation(1);
+
 		return;
 	}
 
 
 	/*
-	 * Sudah mencapai edge.
+	 * UP
+	 *
+	 * Hanya pindah halaman jika
+	 * benar-benar berada di bagian atas.
 	 */
 
-	event.preventDefault();
+	if (
+		scrollingUp &&
+		atTop
+	) {
+
+		event.preventDefault();
+
+		debug(
+			"EDGE → UP NAVIGATION",
+		);
+
+		handleNavigation(-1);
+
+		return;
+	}
 
 
-	handleNavigation(
-		scrollingDown ? 1 : -1
-	);
+	/*
+	 * Normal scrolling.
+	 */
+
 }
 
 
@@ -161,8 +315,9 @@ function handleWheel(
 ===================================== */
 
 function handleTouchStart(
-	event: TouchEvent
+	event: TouchEvent,
 ) {
+
 	if (isNavigating) {
 		return;
 	}
@@ -171,6 +326,7 @@ function handleTouchStart(
 	const touch =
 		event.touches[0];
 
+
 	if (!touch) {
 		return;
 	}
@@ -178,6 +334,12 @@ function handleTouchStart(
 
 	touchStartY =
 		touch.clientY;
+
+
+	debug("TOUCH START", {
+		y: touchStartY,
+	});
+
 }
 
 
@@ -186,12 +348,16 @@ function handleTouchStart(
 ===================================== */
 
 function handleTouchEnd(
-	event: TouchEvent
+	event: TouchEvent,
 ) {
+
 	if (
 		isNavigating ||
 		touchStartY === null
 	) {
+
+		touchStartY = null;
+
 		return;
 	}
 
@@ -199,17 +365,11 @@ function handleTouchEnd(
 	const touch =
 		event.changedTouches[0];
 
+
 	if (!touch) {
-		return;
-	}
 
+		touchStartY = null;
 
-	const container =
-		document.querySelector<HTMLElement>(
-			".scrollable-content"
-		);
-
-	if (!container) {
 		return;
 	}
 
@@ -222,31 +382,54 @@ function handleTouchEnd(
 	touchStartY = null;
 
 
+	debug("TOUCH END", {
+		diffY,
+	});
+
+
+
 	/*
-	 * Bukan swipe yang cukup jauh.
+	 * Swipe terlalu kecil.
 	 */
 
 	if (
 		Math.abs(diffY) <
 		SWIPE_THRESHOLD
 	) {
+
+		return;
+	}
+
+
+	const container =
+		getContainer();
+
+
+	if (!container) {
 		return;
 	}
 
 
 	const direction =
-		diffY > 0 ? 1 : -1;
+		diffY > 0
+			? 1
+			: -1;
 
 
 	/*
 	 * Swipe ke bawah
-	 * saat sudah berada di bawah.
+	 * + berada di bottom.
 	 */
 
 	if (
 		direction === 1 &&
 		isBottomVisible(container)
 	) {
+
+		debug(
+			"TOUCH → DOWN NAVIGATION",
+		);
+
 		event.preventDefault();
 
 		handleNavigation(1);
@@ -257,17 +440,25 @@ function handleTouchEnd(
 
 	/*
 	 * Swipe ke atas
-	 * saat sudah berada di atas.
+	 * + berada di top.
 	 */
 
 	if (
 		direction === -1 &&
 		isTopVisible(container)
 	) {
+
+		debug(
+			"TOUCH → UP NAVIGATION",
+		);
+
 		event.preventDefault();
 
 		handleNavigation(-1);
+
+		return;
 	}
+
 }
 
 
@@ -276,7 +467,13 @@ function handleTouchEnd(
 ===================================== */
 
 export function initPageSwipe() {
+
 	if (initialized) {
+
+		debug(
+			"ALREADY INITIALIZED",
+		);
+
 		return;
 	}
 
@@ -284,21 +481,37 @@ export function initPageSwipe() {
 	initialized = true;
 
 
+	debug("INITIALIZE", {
+		base,
+		routes,
+		path:
+			getCurrentPath(),
+	});
+
+
+	/*
+	 * Touchpad / mouse
+	 */
+
 	document.addEventListener(
 		"wheel",
 		handleWheel,
 		{
-			passive: false
-		}
+			passive: false,
+		},
 	);
 
+
+	/*
+	 * HP / touchscreen
+	 */
 
 	document.addEventListener(
 		"touchstart",
 		handleTouchStart,
 		{
-			passive: false
-		}
+			passive: false,
+		},
 	);
 
 
@@ -306,17 +519,13 @@ export function initPageSwipe() {
 		"touchend",
 		handleTouchEnd,
 		{
-			passive: false
-		}
+			passive: false,
+		},
 	);
 
 
-	console.log(
-		"[PageSwipe] initialized",
-		{
-			base,
-			landing: routes.landing,
-			projects: routes.projects,
-		}
+	debug(
+		"INITIALIZED",
 	);
+
 }
