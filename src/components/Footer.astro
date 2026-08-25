@@ -1,5 +1,325 @@
-<hr />
+---
+const base = import.meta.env.BASE_URL;
+---
 
-<footer class="h-10">
-    <p>© 2026 Yovan</p>
+<footer
+	id="page-footer"
+	class="
+		absolute
+		bottom-0
+        pb-5!
+		left-0
+        px-10! sm:px-20!
+		z-30
+		w-full
+		opacity-0
+		pointer-events-none
+		transition-opacity
+		duration-700
+	"
+
+    class:list={{
+		"hidden md:flex":
+			Astro.url.pathname === base,
+	}}
+>
+	<div
+		data-footer-content
+		class="
+			w-full
+			flex
+			justify-start
+			opacity-0
+			transition-all
+			duration-700
+			ease-out
+		"
+	>
+		<div class="flex h-20 items-center gap-2">
+
+			<div class="flex gap-2 animate-slide-in-left">
+
+				<div
+					class="
+						w-2
+						rounded-[1px]
+						bg-linear-to-r
+						from-cyan-400
+						to-blue-500
+					"
+				></div>
+
+				<h2
+					class="
+						text-[#B1B2B5]
+						font-adamina
+						text-xs
+						lg:text-base
+					"
+					style="font-family: Adamina, serif;"
+				>
+					van.kzr@gmail.com
+				</h2>
+
+			</div>
+
+		</div>
+	</div>
 </footer>
+
+
+<script>
+	function initFooter() {
+
+		const footer =
+			document.querySelector<HTMLElement>(
+				"#page-footer"
+			);
+
+		const content =
+			footer?.querySelector<HTMLElement>(
+				"[data-footer-content]"
+			);
+
+		const container =
+			document.querySelector<HTMLElement>(
+				".scrollable-content"
+			);
+
+		if (
+			!footer ||
+			!content ||
+			!container
+		) {
+			return;
+		}
+
+
+		/*
+		 * =====================================
+		 * BASE
+		 * =====================================
+		 */
+
+		const base =
+			import.meta.env.BASE_URL;
+
+		const currentPath =
+			window.location.pathname;
+
+
+		/*
+		 * =====================================
+		 * LANDING
+		 * =====================================
+		 */
+
+		if (currentPath === base) {
+
+			footer.classList.remove(
+				"opacity-0",
+				"pointer-events-none"
+			);
+
+			footer.classList.add(
+				"opacity-100"
+			);
+
+			content.classList.remove(
+				"opacity-0",
+				"translate-y-5"
+			);
+
+			content.classList.add(
+				"opacity-100",
+				"translate-y-0"
+			);
+
+			return;
+		}
+
+
+		/*
+		 * =====================================
+		 * PROJECT
+		 * =====================================
+		 */
+
+		const rem =
+			parseFloat(
+				getComputedStyle(
+					document.documentElement
+				).fontSize
+			);
+
+		const threshold =
+			5 * rem;
+
+
+		/*
+		 * =====================================
+		 * SHOW
+		 * =====================================
+		 */
+
+		const showFooter = () => {
+
+			footer.classList.remove(
+				"opacity-0",
+				"pointer-events-none"
+			);
+
+			footer.classList.add(
+				"opacity-100"
+			);
+
+			content.classList.remove(
+				"opacity-0",
+				"translate-y-5"
+			);
+
+			content.classList.add(
+				"opacity-100",
+				"translate-y-0"
+			);
+		};
+
+
+		/*
+		 * =====================================
+		 * HIDE
+		 * =====================================
+		 */
+
+		const hideFooter = () => {
+
+			footer.classList.remove(
+				"opacity-100"
+			);
+
+			footer.classList.add(
+				"opacity-0",
+				"pointer-events-none"
+			);
+
+			content.classList.remove(
+				"opacity-100",
+				"translate-y-0"
+			);
+
+			content.classList.add(
+				"opacity-0",
+				"translate-y-5"
+			);
+		};
+
+
+		/*
+		 * =====================================
+		 * UPDATE
+		 * =====================================
+		 */
+
+		const update = () => {
+
+			const scrollTop =
+				container.scrollTop;
+
+			const maxScroll =
+				Math.max(
+					0,
+					container.scrollHeight -
+					container.clientHeight
+				);
+
+			const distanceFromBottom =
+				maxScroll -
+				scrollTop;
+
+
+			/*
+			 * Debug sementara
+			 *
+			 * Bisa dihapus nanti.
+			 */
+
+			console.log({
+				scrollTop,
+				maxScroll,
+				distanceFromBottom,
+				threshold
+			});
+
+
+			if (
+				distanceFromBottom <=
+				threshold
+			) {
+
+				showFooter();
+
+			} else {
+
+				hideFooter();
+
+			}
+		};
+
+
+		/*
+		 * =====================================
+		 * INITIAL CHECK
+		 * =====================================
+		 */
+
+		update();
+
+
+		/*
+		 * =====================================
+		 * SCROLL
+		 * =====================================
+		 */
+
+		container.addEventListener(
+			"scroll",
+			update,
+			{
+				passive: true
+			}
+		);
+
+
+		/*
+		 * =====================================
+		 * CLEANUP
+		 * =====================================
+		 */
+
+		return () => {
+
+			container.removeEventListener(
+				"scroll",
+				update
+			);
+
+		};
+	}
+
+
+	/*
+	 * Initial page
+	 */
+
+	initFooter();
+
+
+	/*
+	 * Astro navigation
+	 */
+
+	document.addEventListener(
+		"astro:page-load",
+		initFooter
+	);
+</script>

@@ -37,17 +37,17 @@ const SWIPE_THRESHOLD = 50;
 const NAVIGATION_LOCK = 800;
 
 
-/* =====================================
-   DEBUG
-===================================== */
+// /* =====================================
+//    DEBUG
+// ===================================== */
 
-function debug(label: string, data?: unknown) {
-	console.log(
-		`%c[PageSwipe] ${label}`,
-		"color:#22d3ee;font-weight:bold;",
-		data ?? "",
-	);
-}
+// function debug(label: string, data?: unknown) {
+// 	console.log(
+// 		`%c[PageSwipe] ${label}`,
+// 		"color:#22d3ee;font-weight:bold;",
+// 		data ?? "",
+// 	);
+// }
 
 
 /* =====================================
@@ -114,7 +114,7 @@ async function handleNavigation(
 
 	if (isNavigating) {
 
-		debug("BLOCKED: navigation locked");
+		// debug("BLOCKED: navigation locked");
 
 		return;
 	}
@@ -127,10 +127,10 @@ async function handleNavigation(
 	isNavigating = true;
 
 
-	debug("NAVIGATION REQUEST", {
-		currentPath,
-		direction,
-	});
+	// debug("NAVIGATION REQUEST", {
+	// 	currentPath,
+	// 	direction,
+	// });
 
 
 	try {
@@ -148,10 +148,10 @@ async function handleNavigation(
 			direction === 1
 		) {
 
-			debug("DOWN → navigate(projects)", {
-				from: currentPath,
-				to: routes.projects,
-			});
+			// debug("DOWN → navigate(projects)", {
+			// 	from: currentPath,
+			// 	to: routes.projects,
+			// });
 
 
 			await navigate(
@@ -180,10 +180,10 @@ async function handleNavigation(
 			direction === -1
 		) {
 
-			debug("UP → history.back()", {
-				from: currentPath,
-				to: routes.landing,
-			});
+			// debug("UP → history.back()", {
+			// 	from: currentPath,
+			// 	to: routes.landing,
+			// });
 
 
 			history.back();
@@ -193,10 +193,10 @@ async function handleNavigation(
 		}
 
 
-		debug("NO NAVIGATION", {
-			currentPath,
-			direction,
-		});
+		// debug("NO NAVIGATION", {
+		// 	currentPath,
+		// 	direction,
+		// });
 
 	} finally {
 
@@ -204,9 +204,9 @@ async function handleNavigation(
 
 			isNavigating = false;
 
-			debug(
-				"NAVIGATION UNLOCKED",
-			);
+			// debug(
+			// 	"NAVIGATION UNLOCKED",
+			// );
 
 		}, NAVIGATION_LOCK);
 
@@ -229,9 +229,9 @@ function handleWheel(
 
 	if (!container) {
 
-		debug(
-			"WHEEL: container not found",
-		);
+		// debug(
+		// 	"WHEEL: container not found",
+		// );
 
 		return;
 	}
@@ -265,17 +265,17 @@ function handleWheel(
 		isBottomVisible(container);
 
 
-	debug("WHEEL", {
-		deltaY,
-		direction:
-			scrollingDown
-				? "DOWN"
-				: "UP",
-		atTop,
-		atBottom,
-		path:
-			getCurrentPath(),
-	});
+	// debug("WHEEL", {
+	// 	deltaY,
+	// 	direction:
+	// 		scrollingDown
+	// 			? "DOWN"
+	// 			: "UP",
+	// 	atTop,
+	// 	atBottom,
+	// 	path:
+	// 		getCurrentPath(),
+	// });
 
 
 	/*
@@ -293,9 +293,9 @@ function handleWheel(
 
 		event.preventDefault();
 
-		debug(
-			"EDGE → DOWN NAVIGATION",
-		);
+		// debug(
+		// 	"EDGE → DOWN NAVIGATION",
+		// );
 
 		handleNavigation(1);
 
@@ -317,9 +317,9 @@ function handleWheel(
 
 		event.preventDefault();
 
-		debug(
-			"EDGE → UP NAVIGATION",
-		);
+		// debug(
+		// 	"EDGE → UP NAVIGATION",
+		// );
 
 		handleNavigation(-1);
 
@@ -360,9 +360,9 @@ function handleTouchStart(
 		touch.clientY;
 
 
-	debug("TOUCH START", {
-		y: touchStartY,
-	});
+	// debug("TOUCH START", {
+	// 	y: touchStartY,
+	// });
 
 }
 
@@ -406,9 +406,9 @@ function handleTouchEnd(
 	touchStartY = null;
 
 
-	debug("TOUCH END", {
-		diffY,
-	});
+	// debug("TOUCH END", {
+	// 	diffY,
+	// });
 
 
 
@@ -450,9 +450,9 @@ function handleTouchEnd(
 		isBottomVisible(container)
 	) {
 
-		debug(
-			"TOUCH → DOWN NAVIGATION",
-		);
+		// debug(
+		// 	"TOUCH → DOWN NAVIGATION",
+		// );
 
 		event.preventDefault();
 
@@ -472,9 +472,9 @@ function handleTouchEnd(
 		isTopVisible(container)
 	) {
 
-		debug(
-			"TOUCH → UP NAVIGATION",
-		);
+		// debug(
+		// 	"TOUCH → UP NAVIGATION",
+		// );
 
 		event.preventDefault();
 
@@ -494,9 +494,9 @@ export function initPageSwipe() {
 
 	if (initialized) {
 
-		debug(
-			"ALREADY INITIALIZED",
-		);
+		// debug(
+		// 	"ALREADY INITIALIZED",
+		// );
 
 		return;
 	}
@@ -505,12 +505,12 @@ export function initPageSwipe() {
 	initialized = true;
 
 
-	debug("INITIALIZE", {
-		base,
-		routes,
-		path:
-			getCurrentPath(),
-	});
+	// debug("INITIALIZE", {
+	// 	base,
+	// 	routes,
+	// 	path:
+	// 		getCurrentPath(),
+	// });
 
 
 	/*
@@ -548,8 +548,8 @@ export function initPageSwipe() {
 	);
 
 
-	debug(
-		"INITIALIZED",
-	);
+	// debug(
+	// 	"INITIALIZED",
+	// );
 
 }
